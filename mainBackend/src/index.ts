@@ -1,33 +1,29 @@
-import admin from 'firebase-admin';
 import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import postRoutes from './reddit/routes/postRoutes';
+import groupRoutes from './reddit/routes/groupRoutes';
+import commentRoutes from './reddit/routes/commentRoutes';
 
-const authenticateToken = async (req, res, next) => {
-    const idToken = req.headers.authorization?.split('Bearer ')[1];
-
-    if (!idToken) {
-        return res.status(401).send('Unauthorized: No token provided');
-    }
-    try {
-        const decodedToken = await admin.auth().verifyIdToken(idToken);
-        req.user = decodedToken;
-        next();
-    } catch (error) {
-        console.error('Error verifying Firebase ID token:', error);
-        if (error.code === 'auth/id-token-expired') {
-            return res.status(401).send('Unauthorized: Token expired. Please log in again.');
-        }
-        return res.status(401).send('Unauthorized: Invalid token');
-    }
-};
+dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-app.get('/protected-quiz-data', authenticateToken, (req, res) => {
-    console.log('User UID:', req.user.uid);
-    console.log('User Email:', req.user.email);
-    res.send(`Welcome, ${req.user.email}! Here's your protected quiz data.`);
-});
+app.use(cors());
+app.use(express.json());
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+mongoose.connect(process.env.MONGODB_URI!)
+  .then(() => {
+    console.log('MongoDB connected')
 
-export default app;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });    
+  })
+  .catch(err => console.error('MongoDB connection error:', err));
+
+app.use('/api/posts', postRoutes);
+app.use('/api/groups', groupRoutes);
+app.use('/api/comments', commentRoutes);
