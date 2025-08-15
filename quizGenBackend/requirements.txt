@@ -1,0 +1,11 @@
+langchain
+langchain_google_genai
+pydantic
+typing
+pymupdf 
+python-pptx 
+fastapi 
+uvicorn
+motor
+python-dotenv
+python-multipart

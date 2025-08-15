@@ -1,0 +1,4 @@
+quiz-gen
+utils/__pycache__
+models/__pycache__
+.env
