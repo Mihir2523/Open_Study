@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from './appwrite';
 import User from '../models/User';
 
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = async (req: any, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(' ')[1];
   
   if (!token) {
