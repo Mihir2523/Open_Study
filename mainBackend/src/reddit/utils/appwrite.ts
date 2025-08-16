@@ -14,5 +14,7 @@ export const verifyToken = async (jwt: string) => {
 };
 
 export const uploadFile = async (file: Buffer, filename: string) => {
-  return storage.createFile(bucketId, 'unique()', file);
+  const uint8array = new Uint8Array(file);
+  const appwriteFile = new File([uint8array], filename);
+  return storage.createFile(bucketId, 'unique()', appwriteFile);
 };

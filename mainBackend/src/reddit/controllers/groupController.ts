@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import Group from '../models/Group';
 import User from '../models/User';
 
-export const createGroup = async (req: Request, res: Response) => {
+export const createGroup = async (req: any, res: Response) => {
   try {
     const { name, description } = req.body;
-    const user = req.user as User;
+    const user = req.user;
 
     const group = await Group.create({
       name,
@@ -24,10 +24,10 @@ export const createGroup = async (req: Request, res: Response) => {
   }
 };
 
-export const joinGroup = async (req: Request, res: Response) => {
+export const joinGroup = async (req: any, res: Response) => {
   try {
     const { groupId } = req.params;
-    const user = req.user as User;
+    const user = req.user;
 
     const group = await Group.findByIdAndUpdate(
       groupId,

@@ -2,11 +2,11 @@ import { Request, Response } from 'express';
 import Comment from '../models/Comment';
 import User from '../models/User';
 
-export const createComment = async (req: Request, res: Response) => {
+export const createComment = async (req: any, res: Response) => {
   try {
     const { postId } = req.params;
     const { content } = req.body;
-    const user = req.user as User;
+    const user = req.user;
 
     const comment = await Comment.create({
       content,

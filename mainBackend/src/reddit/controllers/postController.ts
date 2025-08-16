@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import Post from '../models/Post';
+import Post from '../models/Post.js';
 import { uploadFile } from '../utils/appwrite';
 import User from '../models/User';
 
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (req: any, res: Response) => {
   try {
     const { title, content, groupId } = req.body;
-    const user = req.user as User;
+    const user = req.user;
     let imageUrl;
 
     if (req.file) {
