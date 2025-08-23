@@ -31,7 +31,7 @@ Generate exactly {count} questions of type "{qtype}" with difficulty "{difficult
 Return only valid JSON that matches this format:
 
 {{
-  "questions": [
+  [
     {{
       "question": "<question text>",
       "options": [<list of options with {option_count} options count; empty list for true/false>],
