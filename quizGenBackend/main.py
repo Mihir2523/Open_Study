@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from utils.database import get_db, close_connection
@@ -16,6 +17,15 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="OpenStudy Quiz Gen", lifespan=lifespan)
+
+# CORS: allow all origins, methods, and headers
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],        # accept requests from any origin
+    allow_credentials=False,    # must be False when using "*" for allow_origins
+    allow_methods=["*"],        # allow all HTTP methods
+    allow_headers=["*"],        # allow all headers
+)
 
 app.include_router(router, prefix="/generate_quiz", tags=['Quiz Gen'])
 
