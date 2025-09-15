@@ -1,9 +1,11 @@
 # mongodb.py
 from motor.motor_asyncio import AsyncIOMotorClient
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 import os
+import urllib.parse
 
-load_dotenv()
+# Load .env reliably even under uvicorn reload
+load_dotenv(find_dotenv(usecwd=True))
 
 MONGO_URI = os.environ.get("MONGO_URI")
 DATABASE_NAME = "OpenStudy"
