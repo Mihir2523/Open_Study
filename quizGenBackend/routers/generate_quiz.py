@@ -13,9 +13,9 @@ from utils.text_extraction import FileTextExtractor
 TEMP_DIR = Path("temp")
 TEMP_DIR.mkdir(exist_ok=True)  # create temp folder if not exists
 
-async def save_quiz_to_db(questions, created_by, title):
+async def save_quiz_to_db(quiz, created_by, title):
     db = await get_db()
-    quiz_data = {"title": title, "questions": questions, "created_by": created_by, "created_at": str(datetime.now())}
+    quiz_data = {"title": title, "questions": quiz['questions'], "answers": quiz["answers"], "created_by": created_by, "created_at": str(datetime.now())}
     result = await db.quiz.insert_one(quiz_data)
     new_quiz = await db.quiz.find_one({"_id": result.inserted_id})
     return obj_id_to_str(new_quiz)
@@ -35,6 +35,7 @@ async def generate_quiz_from_text(
     count: int = Form(5),
     qtype: str = Form("mcq"),
     difficulty: str = Form("medium"),
+    weightage: int = Form(1),
     option_count: int = Form(4),
     created_by: str = Form(...)
 ):
@@ -47,10 +48,11 @@ async def generate_quiz_from_text(
         count=count,
         qtype=qtype,
         difficulty=difficulty,
+        weightage=weightage,
         option_count=option_count
     )
-    questions = json.loads(quiz_json)
-    return await save_quiz_to_db(questions["questions"], created_by, title)
+    quiz = json.loads(quiz_json)
+    return await save_quiz_to_db(quiz, created_by, title)
 
 
 @router.post("/pdf")
@@ -60,6 +62,7 @@ async def generate_quiz_from_pdf(
     count: int = Form(5),
     qtype: str = Form("mcq"),
     difficulty: str = Form("medium"),
+    weightage: int = Form(1),
     option_count: int = Form(4),
     created_by: str = Form(...)
 ):
@@ -79,10 +82,11 @@ async def generate_quiz_from_pdf(
         count=count,
         qtype=qtype,
         difficulty=difficulty,
+        weightage= weightage,
         option_count=option_count
     )
-    questions = json.loads(quiz_json)
-    return await save_quiz_to_db(questions["questions"], created_by, title)
+    quiz = json.loads(quiz_json)
+    return await save_quiz_to_db(quiz, created_by, title)
 
 
 @router.post("/ppt")
@@ -92,6 +96,7 @@ async def generate_quiz_from_ppt(
     count: int = Form(5),
     qtype: str = Form("mcq"),
     difficulty: str = Form("medium"),
+    weightage: str = Form(1),
     option_count: int = Form(4),
     created_by: str = Form(...)
 ):
@@ -111,10 +116,11 @@ async def generate_quiz_from_ppt(
         count=count,
         qtype=qtype,
         difficulty=difficulty,
+        weightage=weightage,
         option_count=option_count
     )
-    questions = json.loads(quiz_json)
-    return await save_quiz_to_db(questions["questions"], created_by, title)
+    quiz = json.loads(quiz_json)
+    return await save_quiz_to_db(quiz, created_by, title)
 
 @router.get("/{id}")
 async def get_quiz_from_id(
