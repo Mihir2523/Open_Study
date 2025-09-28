@@ -9,3 +9,4 @@ uvicorn
 motor
 python-dotenv
 python-multipart
+bson

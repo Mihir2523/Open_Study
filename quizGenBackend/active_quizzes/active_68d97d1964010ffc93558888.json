@@ -1,0 +1,139 @@
+{
+  "quizId": "68d97d1964010ffc93558888",
+  "title": "TestD",
+  "questions": [
+    {
+      "question": "Which of the following is a disadvantage of using the range as a measure of dispersion?",
+      "options": [
+        "It is influenced by outliers.",
+        "It is based on all values in the data set.",
+        "It is not affected by extreme values.",
+        "It provides a good approximation of the dispersion of data."
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "What does a lower value of the standard deviation for a data set indicate?",
+      "options": [
+        "The values are spread over a relatively larger range around the mean.",
+        "The values are clustered far away from the mean.",
+        "The values are spread evenly across the distribution.",
+        "The values are spread over a relatively smaller range around the mean."
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the purpose of Chebyshev's Theorem?",
+      "options": [
+        "To determine the exact percentage of data values within a specific number of standard deviations from the mean in a normal distribution.",
+        "To estimate the mean of a dataset.",
+        "To determine the minimum percentage of data values that lie within a specific number of standard deviations from the mean for any distribution.",
+        "To calculate the standard deviation of a dataset."
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the key difference between a population parameter and a sample statistic?",
+      "options": [
+        "A population parameter is calculated for a sample data set, while a sample statistic is calculated for a population data set.",
+        "A population parameter describes the variability in the data, while a sample statistic describes the central tendency.",
+        "A population parameter is a summary measure calculated for a population data set, while a sample statistic is a summary measure calculated for a sample data set.",
+        "There is no difference between a population parameter and a sample statistic."
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why is standard deviation considered the most used measure of dispersion?",
+      "options": [
+        "It is easy to calculate.",
+        "It is not affected by outliers.",
+        "It tells how closely the values of a data set are clustered around the mean.",
+        "It always has a high value."
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "What does the mean deviation measure?",
+      "options": [
+        "The square root of the variance.",
+        "The average deviation from the average value of a given data collection.",
+        "The range of the data set.",
+        "The maximum deviation from the mean."
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the effect of extreme values (outliers) on the mean deviation?",
+      "options": [
+        "It is greatly affected by extreme values.",
+        "It is not affected by extreme values at all.",
+        "It gets least affected by extreme values.",
+        "It is more affected by extreme values than the standard deviation."
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the relationship between variance and standard deviation?",
+      "options": [
+        "Variance is the square root of the standard deviation.",
+        "Standard deviation is the square root of the variance.",
+        "Variance and standard deviation are the same.",
+        "Variance is always greater than the standard deviation."
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "According to the empirical rule, approximately what percentage of observations lie within one standard deviation of the mean in a bell-shaped distribution?",
+      "options": [
+        "50%",
+        "95%",
+        "99.7%",
+        "68%"
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the primary reason for studying dispersion in a set of data?",
+      "options": [
+        "To calculate the mean of the data.",
+        "To compare the spread in two or more distributions.",
+        "To identify outliers in the data.",
+        "To determine the central tendency of the data."
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    }
+  ],
+  "answers": [
+    0,
+    3,
+    2,
+    2,
+    2,
+    1,
+    2,
+    1,
+    3,
+    2
+  ],
+  "cachedAt": "2025-09-28T18:51:03.063138"
+}
