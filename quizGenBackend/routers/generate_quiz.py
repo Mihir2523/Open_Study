@@ -13,9 +13,9 @@ from utils.text_extraction import FileTextExtractor
 TEMP_DIR = Path("temp")
 TEMP_DIR.mkdir(exist_ok=True)  # create temp folder if not exists
 
-async def save_quiz_to_db(quiz, created_by, title):
+async def save_quiz_to_db(quiz, created_by, title, time_limit=30, date_of_quiz=None):
     db = await get_db()
-    quiz_data = {"title": title, "questions": quiz['questions'], "answers": quiz["answers"], "created_by": created_by, "created_at": str(datetime.now())}
+    quiz_data = {"title": title, "questions": quiz['questions'], "answers": quiz["answers"], "created_by": created_by, "created_at": str(datetime.now()), "time_limit": time_limit, "date_of_quiz": date_of_quiz or datetime.now()}
     result = await db.quiz.insert_one(quiz_data)
     new_quiz = await db.quiz.find_one({"_id": result.inserted_id})
     return obj_id_to_str(new_quiz)
@@ -37,7 +37,9 @@ async def generate_quiz_from_text(
     difficulty: str = Form("medium"),
     weightage: int = Form(1),
     option_count: int = Form(4),
-    created_by: str = Form(...)
+    created_by: str = Form(...),
+    time_limit: int = Form(30),
+    date_of_quiz: datetime = Form(None)
 ):
     """
     Generate quiz from raw text and save to DB.
@@ -52,7 +54,7 @@ async def generate_quiz_from_text(
         option_count=option_count
     )
     quiz = json.loads(quiz_json)
-    return await save_quiz_to_db(quiz, created_by, title)
+    return await save_quiz_to_db(quiz, created_by, title, time_limit, date_of_quiz)
 
 
 @router.post("/pdf")
@@ -64,7 +66,9 @@ async def generate_quiz_from_pdf(
     difficulty: str = Form("medium"),
     weightage: int = Form(1),
     option_count: int = Form(4),
-    created_by: str = Form(...)
+    created_by: str = Form(...),
+    time_limit: int = Form(30),
+    date_of_quiz: datetime = Form(None)
 ):
     """
     Generate quiz from PDF file and save to DB.
@@ -86,7 +90,7 @@ async def generate_quiz_from_pdf(
         option_count=option_count
     )
     quiz = json.loads(quiz_json)
-    return await save_quiz_to_db(quiz, created_by, title)
+    return await save_quiz_to_db(quiz, created_by, title, time_limit, date_of_quiz)
 
 
 @router.post("/ppt")
@@ -98,7 +102,9 @@ async def generate_quiz_from_ppt(
     difficulty: str = Form("medium"),
     weightage: str = Form(1),
     option_count: int = Form(4),
-    created_by: str = Form(...)
+    created_by: str = Form(...),
+    time_limit: int = Form(30),
+    date_of_quiz: datetime = Form(None)
 ):
     """
     Generate quiz from PPT file and save to DB.
@@ -120,7 +126,7 @@ async def generate_quiz_from_ppt(
         option_count=option_count
     )
     quiz = json.loads(quiz_json)
-    return await save_quiz_to_db(quiz, created_by, title)
+    return await save_quiz_to_db(quiz, created_by, title, time_limit, date_of_quiz)
 
 @router.get("/{id}")
 async def get_quiz_from_id(

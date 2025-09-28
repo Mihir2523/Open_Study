@@ -16,6 +16,8 @@ class Quiz(BaseModel):
     weightage: int = Field(..., description="Total marks for the quiz")
     created_by: str = Field(..., description="User ID of the quiz creator")
     created_at: str = Field(description="Quiz creation timestamp")
+    time_limit: int = Field(..., description="Time limit for the quiz in minutes")
+    date_of_quiz: datetime = Field(..., description="Scheduled date and time for the quiz")
 
 class QuizGen(BaseModel):
     questions: List[QuizQuestion]
