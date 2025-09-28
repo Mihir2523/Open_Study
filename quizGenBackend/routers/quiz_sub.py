@@ -41,6 +41,8 @@ async def start_quiz(quizId: str = Body(..., embed=True)):
             for q in quiz.get("questions", [])
         ],
         "answers": quiz.get("answers", []),
+        "timeLimit": quiz.get("timeLimit", 0),
+        "date_of_quiz": quiz.get("date_of_quiz"),
         "cachedAt": datetime.utcnow().isoformat(),
     }
 
@@ -65,6 +67,7 @@ async def get_active_quiz(quizId: str):
         raise HTTPException(status_code=404, detail="No active quiz found")
 
     data = json.loads(quiz_file.read_text(encoding="utf-8"))
+    del data["answers"]  # Do not expose correct answers
     return data
 
 
@@ -106,7 +109,7 @@ async def submit_quiz(
     )
 
     db = await get_db()
-    insert_res = await db.results.insert_one(result.dict())
+    insert_res = await db.results.insert_one(result.model_dump_json())
     new_result = await db.results.find_one({"_id": insert_res.inserted_id})
 
     return {"ok": True, "result": obj_id_to_str(new_result)}
