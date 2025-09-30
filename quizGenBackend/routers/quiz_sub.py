@@ -114,7 +114,7 @@ async def submit_quiz(
     )
 
     db = await get_db()
-    insert_res = await db.results.insert_one(result.model_dump_json())
+    insert_res = await db.results.insert_one(result.model_dump())
     new_result = await db.results.find_one({"_id": insert_res.inserted_id})
 
     return {"ok": True, "result": obj_id_to_str(new_result)}
