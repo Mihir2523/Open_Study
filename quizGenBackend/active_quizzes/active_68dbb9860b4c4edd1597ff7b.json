@@ -1,0 +1,89 @@
+{
+  "quizId": "68dbb9860b4c4edd1597ff7b",
+  "title": "Test2",
+  "questions": [
+    {
+      "question": "Which of the following is NOT a key property of linear filters?",
+      "options": [
+        "Linearity",
+        "Shift invariance",
+        "Commutative",
+        "Associativity"
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the main advantage of median filtering over Gaussian filtering?",
+      "options": [
+        "Speed of computation",
+        "Robustness to outliers",
+        "Preservation of edges",
+        "Better noise reduction"
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "What happens when you convolve two times with a Gaussian kernel of width \u03c3?",
+      "options": [
+        "The image is unchanged",
+        "It is the same as convolving once with a kernel of width \u03c3\u221a2",
+        "It is the same as convolving once with a kernel of width \u03c3/2",
+        "The image becomes sharper"
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "In the context of filtering, what does 'separability' refer to?",
+      "options": [
+        "The ability to separate noise from the image",
+        "The property of a filter that allows it to be implemented as a sequence of 1D filters",
+        "The ability to separate an image into different color channels",
+        "The separation of an image into different frequency components"
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "What is the purpose of a sharpening filter?",
+      "options": [
+        "To reduce noise in an image",
+        "To blur an image",
+        "To accentuate differences with the local average",
+        "To smooth an image"
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Which of the following is a method to handle the filter window falling off the edge of the image?",
+      "options": [
+        "Wrap around",
+        "Copy edge",
+        "Clip filter (black)",
+        "All of the above"
+      ],
+      "type": "mcq",
+      "weightage": 1,
+      "difficulty": "medium"
+    }
+  ],
+  "answers": [
+    2,
+    1,
+    1,
+    1,
+    2,
+    3
+  ],
+  "timeLimit": 0,
+  "date_of_quiz": "2025-09-30T11:04:36.185000",
+  "cachedAt": "2025-09-30T11:06:10.868471"
+}

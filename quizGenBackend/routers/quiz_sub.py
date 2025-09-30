@@ -17,11 +17,26 @@ ACTIVE_DIR.mkdir(exist_ok=True)
 @router.post("/start-quiz")
 async def start_quiz(quizId: str = Body(..., embed=True)):
     """
-    Start a quiz: fetch from DB, cache it locally for grading.
+    Start a quiz: return cached quiz if exists, else fetch from DB and cache it.
+    Correct answers are never exposed in the response.
     """
     if not ObjectId.is_valid(quizId):
         raise HTTPException(status_code=400, detail="Invalid quiz ID format")
 
+    quiz_file = ACTIVE_DIR / f"active_{quizId}.json"
+
+    if quiz_file.exists():
+        # Quiz is already cached
+        data = json.loads(quiz_file.read_text(encoding="utf-8"))
+        del data["answers"]  # Do not expose correct answers
+        return {
+            "ok": True,
+            "message": "Quiz fetched from cache",
+            "questionCount": len(data["questions"]),
+            "quiz": data,
+        }
+
+    # Not cached yet — fetch from DB
     db = await get_db()
     quiz = await db.quiz.find_one({"_id": ObjectId(quizId)})
     if not quiz:
@@ -42,33 +57,23 @@ async def start_quiz(quizId: str = Body(..., embed=True)):
         ],
         "answers": quiz.get("answers", []),
         "timeLimit": quiz.get("timeLimit", 0),
-        "date_of_quiz": quiz.get("date_of_quiz"),
+        "date_of_quiz": quiz.get("date_of_quiz").isoformat() if quiz.get("date_of_quiz") else None,
         "cachedAt": datetime.utcnow().isoformat(),
     }
 
-    quiz_file = ACTIVE_DIR / f"active_{quizId}.json"
-    quiz_file.write_text(json.dumps(cache, indent=2), encoding="utf-8")
+    # Cache the quiz
+    quiz_file.write_text(json.dumps(cache, indent=2, default=str), encoding="utf-8")
+
+    # Remove answers before sending to client
+    response = dict(cache)
+    del response["answers"]
 
     return {
         "ok": True,
         "message": "Quiz cached",
-        "quizId": cache["quizId"],
-        "questionCount": len(cache["questions"]),
+        "questionCount": len(response["questions"]),
+        "quiz": response,
     }
-
-
-@router.get("/active-quiz/{quizId}")
-async def get_active_quiz(quizId: str):
-    """
-    Get the cached active quiz by quizId.
-    """
-    quiz_file = ACTIVE_DIR / f"active_{quizId}.json"
-    if not quiz_file.exists():
-        raise HTTPException(status_code=404, detail="No active quiz found")
-
-    data = json.loads(quiz_file.read_text(encoding="utf-8"))
-    del data["answers"]  # Do not expose correct answers
-    return data
 
 
 @router.post("/submit")
