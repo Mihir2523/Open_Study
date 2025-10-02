@@ -29,6 +29,7 @@ async def start_quiz(quizId: str = Body(..., embed=True)):
         # Quiz is already cached
         data = json.loads(quiz_file.read_text(encoding="utf-8"))
         del data["answers"]  # Do not expose correct answers
+        print(data)
         return {
             "ok": True,
             "message": "Quiz fetched from cache",
@@ -56,7 +57,7 @@ async def start_quiz(quizId: str = Body(..., embed=True)):
             for q in quiz.get("questions", [])
         ],
         "answers": quiz.get("answers", []),
-        "timeLimit": quiz.get("timeLimit", 0),
+        "timeLimit": quiz.get("time_limit", 0),
         "date_of_quiz": quiz.get("date_of_quiz").isoformat() if quiz.get("date_of_quiz") else None,
         "cachedAt": datetime.utcnow().isoformat(),
     }
@@ -66,6 +67,7 @@ async def start_quiz(quizId: str = Body(..., embed=True)):
 
     # Remove answers before sending to client
     response = dict(cache)
+    print(response)
     del response["answers"]
 
     return {
