@@ -122,6 +122,24 @@ async def submit_quiz(
     return {"ok": True, "result": obj_id_to_str(new_result)}
 
 
+@router.get("/results/{quizId}")
+async def get_quiz_results(quizId: str):
+    """
+    Get all user results for a given quiz ID.
+    """
+    db = await get_db()
+    cursor = db.results.find({"quizId": quizId})
+
+    results = []
+    async for doc in cursor:
+        results.append(obj_id_to_str(doc))
+
+    if not results:
+        raise HTTPException(status_code=404, detail="No results found for this quiz")
+
+    return {"quizId": quizId, "results": results}
+
+
 @router.get("/results/{userId}")
 async def get_user_results(userId: str):
     """
