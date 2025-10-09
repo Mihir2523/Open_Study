@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from utils.database import get_db, close_connection
 from routers.generate_quiz import router
+from routers.quiz_sub import router as quiz_sub_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -28,6 +29,7 @@ app.add_middleware(
 )
 
 app.include_router(router, prefix="/generate_quiz", tags=['Quiz Gen'])
+app.include_router(quiz_sub_router, prefix="/quiz", tags=['Quiz Submission'])
 
 @app.get("/")
 async def root():

@@ -59,7 +59,7 @@ Return only valid JSON that strictly matches this following format:
             "option_count": option_count
         }
         prompt = self.prompt_template.format(**params)
-        print(prompt)
+        # print(prompt)
         return self.quiz_llm.invoke(prompt)
 
     def generate_as_json(self, text: str, count: int, qtype: str, difficulty: str, weightage: str, option_count: int) -> str:
