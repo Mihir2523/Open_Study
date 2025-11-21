@@ -1,6 +1,6 @@
 fastapi
 uvicorn
-langchain>=1.0.0
+langchain
 langchain_google_genai
 pydantic
 typing
