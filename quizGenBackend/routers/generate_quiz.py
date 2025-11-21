@@ -1,8 +1,15 @@
 from fastapi import APIRouter, Form, UploadFile, File, HTTPException
 from pathlib import Path
+from bson import ObjectId
 import json
 import shutil
 from datetime import datetime
+from fastapi.responses import FileResponse
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
+
 
 from utils.database import get_db
 from models.quiz import obj_id_to_str
@@ -25,6 +32,46 @@ def save_uploaded_file(file: UploadFile) -> Path:
     with open(temp_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
     return temp_path
+
+def generate_quiz_pdf(quiz, file_path: Path):
+    styles = getSampleStyleSheet()
+    story = []
+
+    # Title
+    story.append(Paragraph(f"<b>{quiz['title']}</b>", styles["Title"]))
+    story.append(Spacer(1, 20))
+
+    # Safe weightage handling
+    if "weightage" in quiz:
+        story.append(Paragraph(f"Total Weightage: {quiz['weightage']}", styles["Normal"]))
+    else:
+        # Auto compute weightage if missing
+        computed_weight = sum(q["weightage"] for q in quiz["questions"])
+        story.append(Paragraph(f"Total Weightage: {computed_weight} (auto-calculated)", styles["Normal"]))
+
+    story.append(Paragraph(f"Time Limit: {quiz.get('time_limit', 'N/A')} minutes", styles["Normal"]))
+    story.append(Spacer(1, 20))
+
+    # Render questions
+    for idx, q in enumerate(quiz["questions"], start=1):
+        story.append(Paragraph(f"<b>{idx}. {q['question']}</b>", styles["Normal"]))
+        story.append(Paragraph(f"(Difficulty: {q['difficulty']}, Marks: {q['weightage']})", styles["Italic"]))
+        story.append(Spacer(1, 10))
+
+        if q["type"] == "mcq":
+            for op_i, opt in enumerate(q["options"], start=1):
+                story.append(Paragraph(f"{op_i}) {opt}", styles["Normal"]))
+            story.append(Spacer(1, 15))
+
+        else:
+            story.append(Paragraph("1) True", styles["Normal"]))
+            story.append(Paragraph("2) False", styles["Normal"]))
+            story.append(Spacer(1, 15))
+
+    pdf = SimpleDocTemplate(str(file_path), pagesize=A4)
+    pdf.build(story)
+
+    return file_path
 
 router = APIRouter()
 
@@ -148,3 +195,54 @@ async def get_quiz_from_id(
         raise HTTPException(status_code=404, detail="No quizzes found for this user")
 
     return {"quizzes": quizzes}
+
+@router.delete("/delete/{quiz_id}")
+async def delete_quiz(quiz_id: str):
+    """
+    Delete a quiz by its ObjectId.
+    """
+    db = await get_db()
+
+    # Validate ObjectId
+    if not ObjectId.is_valid(quiz_id):
+        raise HTTPException(status_code=400, detail="Invalid quiz ID format")
+
+    result = await db.quiz.delete_one({"_id": ObjectId(quiz_id)})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+
+    return {"status": "success", "message": "Quiz deleted successfully"}
+
+@router.get("/download/{quiz_id}")
+async def download_quiz_pdf(quiz_id: str):
+    """
+    Generate a PDF question paper from quiz ID and send it for download.
+    Only questions are included, not answers.
+    """
+    db = await get_db()
+
+    # Validate ID format
+    if not ObjectId.is_valid(quiz_id):
+        raise HTTPException(status_code=400, detail="Invalid Quiz ID")
+
+    # Fetch quiz
+    quiz = await db.quiz.find_one({"_id": ObjectId(quiz_id)})
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+
+    # Convert _id to string for internal usage
+    quiz["id"] = str(quiz["_id"])
+    del quiz["_id"]
+
+    # Prepare path
+    pdf_path = TEMP_DIR / f"quiz_{quiz_id}.pdf"
+
+    # Generate question paper PDF
+    generate_quiz_pdf(quiz, pdf_path)
+
+    return FileResponse(
+        path=pdf_path,
+        filename=f"{quiz['title']}.pdf",
+        media_type="application/pdf"
+    )
