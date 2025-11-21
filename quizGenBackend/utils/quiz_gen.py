@@ -1,6 +1,6 @@
 import json
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import PromptTemplate
+from langchain import PromptTemplate
 from models.quiz import QuizGen
 
 # ==== 2. Quiz Generator Utility ====
