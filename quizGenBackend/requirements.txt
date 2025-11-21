@@ -1,11 +1,11 @@
-langchain
+fastapi
+uvicorn
+langchain>=1.0.0
 langchain_google_genai
 pydantic
 typing
-pymupdf 
-python-pptx 
-fastapi 
-uvicorn
+pymupdf
+python-pptx
 motor
 python-dotenv
 python-multipart
