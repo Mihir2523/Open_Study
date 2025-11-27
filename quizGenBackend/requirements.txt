@@ -1,11 +1,12 @@
+fastapi
+uvicorn
 langchain
 langchain_google_genai
 pydantic
 typing
-pymupdf 
-python-pptx 
-fastapi 
-uvicorn
+pymupdf
+python-pptx
 motor
 python-dotenv
 python-multipart
+reportlab

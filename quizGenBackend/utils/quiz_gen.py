@@ -1,6 +1,6 @@
 import json
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts.prompt import PromptTemplate
 from models.quiz import QuizGen
 
 # ==== 2. Quiz Generator Utility ====
@@ -20,7 +20,9 @@ class QuizGenerator:
             }
         )
         self.quiz_llm = self.llm.with_structured_output(QuizGen)
-        self.prompt_template = PromptTemplate.from_template("""
+        self.prompt_template = PromptTemplate(
+    input_variables=["text", "count", "qtype", "difficulty", "weightage", "option_count"],
+    template="""
 You are a quiz generator AI assistant.
 
 Given the following text:
@@ -34,17 +36,17 @@ Return only valid JSON that strictly matches this following format:
   "questions": [
     {{
       "question": "<question text>",
-      "options": [<list of options with {option_count} options count; empty list for true/false>],
+      "options": [<list of options with {option_count} options; empty list for true/false>],
       "type": "<mcq or true_false>",
       "weightage": "<{weightage} marks for the question>",
       "difficulty": "<easy, medium, or hard>"
-    }},
-    "answers: [<index of correct answer for each question, 0-based indexing>]
-    ...
+    }}
   ],
-  
+  "answers": [<index of correct answer for each question, 0-based indexing>]
 }}
-""")
+"""
+)
+
 
     def generate(self, text: str, count: int, qtype: str, difficulty: str, weightage: str, option_count: int) -> QuizGen:
         """
