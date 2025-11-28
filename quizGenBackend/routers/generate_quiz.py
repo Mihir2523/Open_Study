@@ -101,7 +101,16 @@ async def generate_quiz_from_text(
         option_count=option_count
     )
     quiz = json.loads(quiz_json)
-    return await save_quiz_to_db(quiz, created_by, title, time_limit, date_of_quiz)
+    # return await save_quiz_to_db(quiz, created_by, title, time_limit, date_of_quiz)
+    return {
+        "preview": True,
+        "title": title,
+        "created_by": created_by,
+        "time_limit": time_limit,
+        "date_of_quiz": date_of_quiz,
+        "questions": quiz["questions"],
+        "answers": quiz["answers"]
+    }
 
 
 @router.post("/pdf")
@@ -137,7 +146,16 @@ async def generate_quiz_from_pdf(
         option_count=option_count
     )
     quiz = json.loads(quiz_json)
-    return await save_quiz_to_db(quiz, created_by, title, time_limit, date_of_quiz)
+    #return await save_quiz_to_db(quiz, created_by, title, time_limit, date_of_quiz)
+    return {
+        "preview": True,
+        "title": title,
+        "created_by": created_by,
+        "time_limit": time_limit,
+        "date_of_quiz": date_of_quiz,
+        "questions": quiz["questions"],
+        "answers": quiz["answers"]
+    }
 
 
 @router.post("/ppt")
@@ -147,7 +165,7 @@ async def generate_quiz_from_ppt(
     count: int = Form(5),
     qtype: str = Form("mcq"),
     difficulty: str = Form("medium"),
-    weightage: str = Form(1),
+    weightage: int = Form(1),
     option_count: int = Form(4),
     created_by: str = Form(...),
     time_limit: int = Form(30),
@@ -173,7 +191,34 @@ async def generate_quiz_from_ppt(
         option_count=option_count
     )
     quiz = json.loads(quiz_json)
-    return await save_quiz_to_db(quiz, created_by, title, time_limit, date_of_quiz)
+    # return await save_quiz_to_db(quiz, created_by, title, time_limit, date_of_quiz)
+    return {
+        "preview": True,
+        "title": title,
+        "created_by": created_by,
+        "time_limit": time_limit,
+        "date_of_quiz": date_of_quiz,
+        "questions": quiz["questions"],
+        "answers": quiz["answers"]
+    }
+    
+@router.post("/save")
+async def save_generated_quiz(payload: dict):
+    db = await get_db()
+
+    required_fields = ["title", "questions", "answers", "created_by"]
+    for field in required_fields:
+        if field not in payload:
+            raise HTTPException(status_code=400, detail=f"Missing field: {field}")
+
+    payload["created_at"] = str(datetime.now())
+    payload["date_of_quiz"] = payload.get("date_of_quiz", datetime.now())
+
+    result = await db.quiz.insert_one(payload)
+    new_quiz = await db.quiz.find_one({"_id": result.inserted_id})
+    
+    return obj_id_to_str(new_quiz)
+
 
 @router.get("/{id}")
 async def get_quiz_from_id(

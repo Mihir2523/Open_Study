@@ -1,8 +1,14 @@
 from fastapi import APIRouter, HTTPException, Body
+from fastapi.responses import FileResponse
 from pathlib import Path
 import json
 from datetime import datetime
 from bson import ObjectId
+import uuid
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
 
 from utils.database import get_db
 from models.result import Result, obj_id_to_str
@@ -139,6 +145,56 @@ async def get_quiz_results(quizId: str):
 
     return {"quizId": quizId, "results": results}
 
+@router.post("/download-results")
+async def download_quiz_results(payload: dict = Body(...)):
+    """
+    Generate a PDF for quiz results and return file.
+    """
+    results = payload["results"]
+    filename = f"./results/quiz_results_{uuid.uuid4().hex}.pdf"
+    file_path = Path(filename)
+
+    doc = SimpleDocTemplate(str(file_path), pagesize=letter)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    elements.append(Paragraph("Quiz Results", styles['Title']))
+    elements.append(Paragraph(" ", styles['Normal']))
+
+    data = [["Email", "Marks", "Total", "Submitted At"]]
+
+    for r in results:
+        data.append([
+            r.get("userId", ""),
+            str(r.get("marks", "")),
+            str(r.get("total", "")),
+            r.get("submitted_at", "")
+        ])
+
+    table = Table(data, colWidths=[150, 60, 60, 150])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.darkgreen),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        
+        ('ALIGN', (1, 1), (-1, -1), 'CENTER'),
+        
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ]))
+
+    elements.append(table)
+
+    # build pdf
+    doc.build(elements)
+
+    return FileResponse(
+        path=file_path,
+        filename=filename,
+        media_type="application/pdf"
+    )
 
 @router.get("/results/{userId}")
 async def get_user_results(userId: str):
