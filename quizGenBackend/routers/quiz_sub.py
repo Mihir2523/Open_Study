@@ -150,7 +150,7 @@ async def download_quiz_results(results: list = Body(...)):
     """
     Generate a PDF for quiz results and return file.
     """
-    filename = f"quiz_results_{uuid.uuid4().hex}.pdf"
+    filename = f"./results/quiz_results_{uuid.uuid4().hex}.pdf"
     file_path = Path(filename)
 
     doc = SimpleDocTemplate(str(file_path), pagesize=letter)
@@ -191,7 +191,7 @@ async def download_quiz_results(results: list = Body(...)):
 
     return FileResponse(
         path=file_path,
-        filename="quiz_results.pdf",
+        filename=filename,
         media_type="application/pdf"
     )
 
