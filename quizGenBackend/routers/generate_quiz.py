@@ -147,7 +147,7 @@ async def generate_quiz_from_ppt(
     count: int = Form(5),
     qtype: str = Form("mcq"),
     difficulty: str = Form("medium"),
-    weightage: str = Form(1),
+    weightage: int = Form(1),
     option_count: int = Form(4),
     created_by: str = Form(...),
     time_limit: int = Form(30),
