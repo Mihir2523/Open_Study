@@ -146,10 +146,11 @@ async def get_quiz_results(quizId: str):
     return {"quizId": quizId, "results": results}
 
 @router.post("/download-results")
-async def download_quiz_results(results: list = Body(...)):
+async def download_quiz_results(payload: list = Body(...)):
     """
     Generate a PDF for quiz results and return file.
     """
+    results = payload["results"]
     filename = f"./results/quiz_results_{uuid.uuid4().hex}.pdf"
     file_path = Path(filename)
 
