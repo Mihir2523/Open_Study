@@ -146,7 +146,7 @@ async def get_quiz_results(quizId: str):
     return {"quizId": quizId, "results": results}
 
 @router.post("/download-results")
-async def download_quiz_results(payload: list = Body(...)):
+async def download_quiz_results(payload: dict = Body(...)):
     """
     Generate a PDF for quiz results and return file.
     """
